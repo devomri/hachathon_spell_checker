@@ -7,7 +7,7 @@ class LevenshteinDistance:
         self.matching_idx = matching_idx
 
     def match_best_candidates(sample , dictionary, matching_index):
-        candidates = nsmallest(matching_index, ((k,i) for i,k in enumerate([editdistance.eval(sample, val[1]) for i, val in enumerate(dictionary)])))
+        candidates = nsmallest(matching_index, ((k,i) for i,k in enumerate([editdistance.eval(sample, val[1]) for val in dictionary])))
         return [i[1] for i in candidates]
 
     def calc_LS(self, data, dictionary):
