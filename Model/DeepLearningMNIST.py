@@ -69,7 +69,25 @@ class DeepLearningMNIST:
             sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
 
         # Test trained model
-        correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-        print(sess.run(accuracy, feed_dict={x: self.test["x"],
-                                            y_: self.test["y"]}))
+        # correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
+        # accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        # print(sess.run(accuracy, feed_dict={x: self.test["x"],
+        #                                     y_: self.test["y"]}))
+
+        success = 0
+        test_size = len(self.test["x"])
+        for i in range(test_size):
+            prediction = sess.run(y, feed_dict={x: self.test["x"][i].reshape(1,26),
+                                                y_: self.test["y"][i].reshape(1,5000)})
+            prediction = list(prediction[0])
+            prediction_clone = list(prediction)
+            prediction_clone.sort()
+            first_index = prediction.index(prediction_clone[-1])
+            second_index = prediction.index(prediction_clone[-2])
+            third_index = prediction.index(prediction_clone[-3])
+
+            true_label_index = np.argmax(self.test["y"][i])
+            if true_label_index == first_index or true_label_index == second_index or true_label_index == third_index:
+                success += 1
+
+        print("Accuracy is:" + str(success / test_size))

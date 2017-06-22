@@ -63,7 +63,7 @@ model.add(Dense(512, input_shape=(26,)))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes))
-model.add(Activation('softmax'))
+#model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
@@ -74,7 +74,9 @@ history = model.fit(x_train, y_train,
                     epochs=epochs,
                     verbose=1,
                     validation_split=0.1)
+
 score = model.evaluate(x_test, y_test,
                        batch_size=batch_size, verbose=1)
+
 print('Test score:', score[0])
 print('Test accuracy:', score[1])
