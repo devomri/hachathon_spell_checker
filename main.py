@@ -1,10 +1,11 @@
 import numpy as np
-import DataAccess.DataAccess as data_access
+import collections
+import Model.DeepLearningMNIST as dl
 
 
 def main():
-    dal = data_access.DataAccess()
-    a = dal.dictionary
+    a = dl.DeepLearningMNIST()
+    a.train_model()
 
     print("Hello World")
 
