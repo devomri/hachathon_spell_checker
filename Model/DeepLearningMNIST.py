@@ -7,10 +7,12 @@ from tensorflow.contrib import slim
 
 class DeepLearningMNIST:
     def __init__(self):
+        print("Start normalizing data")
         self.last_batch_index = 0
         self.dal = data_access.DataAccess()
         self.train = self.convert_data(self.dal.train_data)
         self.test = self.convert_data(self.dal.test_data)
+        print("End normalizing data")
 
     def convert_data(self, data):
         x = list()
@@ -61,9 +63,14 @@ class DeepLearningMNIST:
         return batch_x, batch_y
 
     def train_model(self):
+        print("Start model network")
         x = tf.placeholder(tf.float32, [None, 26 * 26])
-        fc1 = slim.fully_connected(x, 10000, activation_fn=tf.nn.relu)
-        y = slim.fully_connected(fc1, 5000, activation_fn=None)
+        fc1 = slim.fully_connected(x, 500,
+                                   weights_initializer=tf.contrib.layers.xavier_initializer(),
+                                   activation_fn=tf.nn.relu)
+        y = slim.fully_connected(fc1, 5000,
+                                 weights_initializer=tf.contrib.layers.xavier_initializer(),
+                                 activation_fn=tf.nn.relu)
 
         y_ = tf.placeholder(tf.float32, [None, 5000])
 
@@ -73,17 +80,14 @@ class DeepLearningMNIST:
 
         sess = tf.InteractiveSession()
         tf.global_variables_initializer().run()
-        # Train
-        for _ in range(40):
+
+        print("Start Training...")
+        for b in range(41):
+            print("Batch number " + str(b))
             batch_xs, batch_ys = self.get_next_batch(1000)
             sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
 
-        # Test trained model
-        # correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-        # accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-        # print(sess.run(accuracy, feed_dict={x: self.test["x"],
-        #                                     y_: self.test["y"]}))
-
+        print("Start testing...")
         success = 0
         test_size = len(self.test["x"])
         for i in range(test_size):
