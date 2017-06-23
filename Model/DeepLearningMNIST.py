@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 import string
 import DataAccess.DataAccess as data_access
+from tensorflow.contrib import slim
 
 
 class DeepLearningMNIST:
@@ -25,10 +26,20 @@ class DeepLearningMNIST:
         }
 
     def convert_word_to_vec(self, word):
-        vec = np.zeros(26)
-        for c in word.lower():
-            i = string.ascii_lowercase.index(c)
-            vec[i] += 1
+        vec = np.zeros(26 * 26)
+        # for c in word.lower():
+        #     i = string.ascii_lowercase.index(c)
+        #     vec[i] += 1
+        lowered_word = word.lower()
+        for i in range(len(lowered_word) - 1):
+            first_letter = lowered_word[i]
+            second_letter = lowered_word[i + 1]
+
+            ascii_first = string.ascii_lowercase.index(first_letter)
+            ascii_second = string.ascii_lowercase.index(second_letter)
+
+            vec_index = 26 * ascii_first + ascii_second
+            vec[vec_index] += 1
 
         return vec
 
@@ -50,10 +61,9 @@ class DeepLearningMNIST:
         return batch_x, batch_y
 
     def train_model(self):
-        x = tf.placeholder(tf.float32, [None, 26])
-        W = tf.Variable(tf.zeros([26, 5000]))
-        b = tf.Variable(tf.zeros([5000]))
-        y = tf.matmul(x, W) + b
+        x = tf.placeholder(tf.float32, [None, 26 * 26])
+        fc1 = slim.fully_connected(x, 10000, activation_fn=tf.nn.relu)
+        y = slim.fully_connected(fc1, 5000, activation_fn=None)
 
         y_ = tf.placeholder(tf.float32, [None, 5000])
 
@@ -77,7 +87,7 @@ class DeepLearningMNIST:
         success = 0
         test_size = len(self.test["x"])
         for i in range(test_size):
-            prediction = sess.run(y, feed_dict={x: self.test["x"][i].reshape(1,26),
+            prediction = sess.run(y, feed_dict={x: self.test["x"][i].reshape(1,26 * 26),
                                                 y_: self.test["y"][i].reshape(1,5000)})
             prediction = list(prediction[0])
             prediction_clone = list(prediction)
@@ -90,4 +100,4 @@ class DeepLearningMNIST:
             if true_label_index == first_index or true_label_index == second_index or true_label_index == third_index:
                 success += 1
 
-        print("Accuracy is:" + str(success / test_size))
+        print("Success: {0} Accuracy is: {1}".format(str(success), str(success / test_size)))
