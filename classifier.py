@@ -14,9 +14,9 @@ class Classifier(object):
 
     def predict(self, word_with_typo):
         distance_array = [editdistance.eval(word_with_typo, val[1]) for val in self.total_dictionary]
-        a = [(k, i) for i, k in enumerate(distance_array)]
-        b = [val[1] for val in self.dictionary]
-        return [b.index(self.total_dictionary[i[1]][0]) for i in nsmallest(3, a)]
+        dist_index_array = [(k, i) for i, k in enumerate(distance_array)]
+        dictionary_entries = [val[1] for val in self.dictionary]
+        return [dictionary_entries.index(self.total_dictionary[i[1]][0]) for i in nsmallest(3, dist_index_array)]
 
     def classify(self, X):
         """
