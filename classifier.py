@@ -1,6 +1,7 @@
 import pickle
 import editdistance
 from heapq import nsmallest
+import numpy as np
 
 
 class Classifier(object):
@@ -27,4 +28,4 @@ class Classifier(object):
                  Word indices are specified in the file dictionary_5000.pickle
         """
         y_hat = [self.predict(m) for m in X]
-        return y_hat
+        return np.array(y_hat)
