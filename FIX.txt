@@ -1,0 +1,8 @@
+1. Task 2
+2. Python version 3.5.2
+3. time in seconds: 348.32
+4. the score: 99.160
+5. Changes:
+Classifier fixed to return np.array
+In addition, I checked the model against 5K examples and not all the 50K as in
+the original test file
